@@ -21,6 +21,7 @@ function Copy-AppFilesToCompilerFolder {
     Param (
         [Parameter(Mandatory=$true)]
         [string] $compilerFolder,
+        [string] $symbolsPath,
         [Parameter(Mandatory=$true)]
         $appFiles,
         [string[]] $includeOnlyAppIds = @(),
@@ -29,7 +30,9 @@ function Copy-AppFilesToCompilerFolder {
     )
 
     Write-Host "Copy app files to compiler folder"
-    $symbolsPath = Join-Path $compilerFolder 'symbols'
+    if (!$symbolsPath) {
+        $symbolsPath = Join-Path $compilerFolder 'symbols'
+    }
     $compilerFolderAppFiles = @(Get-ChildItem -Path (Join-Path $symbolsPath '*.app') | Select-Object -ExpandProperty FullName)
     $compilerFolderApps = GetAppInfo -AppFiles $compilerFolderAppFiles -compilerFolder $compilerFolder -cacheAppinfoPath (Join-Path $symbolsPath 'cache_AppInfo.json')
     if ($checkAlreadyInstalled) {
